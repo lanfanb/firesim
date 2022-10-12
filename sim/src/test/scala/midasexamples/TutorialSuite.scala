@@ -187,6 +187,10 @@ class ParityF1Test extends TutorialSuite("Parity") {
   runTest("verilator", true)
   runTest("vcs", true)
 }
+class PlusargsTest extends TutorialSuite("Plusargs") {
+  runTest("verilator", true)
+  // runTest("vcs", true)
+}
 class ShiftRegisterF1Test extends TutorialSuite("ShiftRegister")
 class ResetShiftRegisterF1Test extends TutorialSuite("ResetShiftRegister")
 class EnableShiftRegisterF1Test extends TutorialSuite("EnableShiftRegister")
@@ -376,6 +380,7 @@ class TerminationF1Test extends TutorialSuite("TerminationModule") {
 class ChiselExampleDesigns extends Suites(
   new GCDF1Test,
   new ParityF1Test,
+  new PlusargsTest,
   new ResetShiftRegisterF1Test,
   new EnableShiftRegisterF1Test,
   new StackF1Test,
