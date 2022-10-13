@@ -6,10 +6,14 @@
 
 import argparse
 
-from common import change_workflow_instance_states
+from platform_lib import Platform, get_platform_enum
+from common import aws_platform_lib, azure_platform_lib
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('platform',
+                        choices = ['aws', 'azure', 'all'],
+                        help = "The platform CI is being run on")
     parser.add_argument('tag_value',
                        help = "The tag used to identify workflow instances.")
     parser.add_argument('state_change',
@@ -17,6 +21,9 @@ if __name__ == "__main__":
                        help = "The state transition to initiate on workflow instances.")
     parser.add_argument('github_api_token',
                        help = "API token to modify self-hosted runner state.")
-
     args = parser.parse_args()
-    change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)
+    platform = get_platform_enum(args.platform)
+    if platform == Platform.AWS or platform == Platform.ALL:
+        aws_platform_lib.change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)
+    if platform == Platform.AZURE or platform == Platform.ALL:        
+        azure_platform_lib.change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)

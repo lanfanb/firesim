@@ -8,9 +8,10 @@ import sys
 from fabric.api import *
 import fabric
 
-from common import *
+from platform_lib import Platform, PlatformLib, get_platform_enum
+from common import deregister_runners, manager_home_dir, gha_runners_api_url, get_header, aws_platform_lib, azure_platform_lib
 # This is expected to be launch from the ci container
-from ci_variables import *
+from ci_variables import ci_personal_api_token, ci_workflow_run_id, ci_repo_name
 
 def wait_machine_launch_complete():
     # Catch any exception that occurs so that we can gracefully teardown
@@ -25,7 +26,7 @@ def wait_machine_launch_complete():
     sudo("echo '* hard nofile 16384' >> /etc/security/limits.conf")
     sudo("echo '* soft nofile 16384' >> /etc/security/limits.conf")
 
-def setup_self_hosted_runners():
+def setup_self_hosted_runners(platform_lib: PlatformLib):
     """ Installs GHA self-hosted runner machinery on the manager.  """
 
     # Catch any exception that occurs so that we can gracefully teardown
@@ -41,7 +42,7 @@ def setup_self_hosted_runners():
         with settings(warn_only=True):
             for runner_idx in range(NUM_RUNNERS):
                 run(f"screen -XS gh-a-runner-{runner_idx} quit")
-        deregister_runners(ci_personal_api_token, ci_workflow_run_id)
+        deregister_runners(ci_personal_api_token, f"{platform}-{ci_workflow_run_id}")
 
         # spawn runners
         for runner_idx in range(NUM_RUNNERS):
@@ -66,9 +67,15 @@ def setup_self_hosted_runners():
                 # config runner
                 put(".github/scripts/gh-a-runner.expect", actions_dir)
                 run("chmod +x gh-a-runner.expect")
+<<<<<<< HEAD
                 runner_name = f"{ci_workflow_run_id}-{runner_idx}" # used to teardown runner
                 unique_label = ci_workflow_run_id # used within the yaml to choose a runner
                 run("./gh-a-runner.expect {} {} {}".format(reg_token, runner_name, unique_label))
+=======
+                runner_name = f"{platform_lib.get_platform_enum()}-{ci_workflow_run_id}-{runner_idx}" # used to teardown runner
+                unique_label = f"{platform_lib.get_platform_enum()}-{ci_workflow_run_id}" # used within the yaml to choose a runner
+                run(f"./gh-a-runner.expect {reg_token} {runner_name} {unique_label} {ci_repo_name}")
+>>>>>>> 58b6e2d6 (adding azure ci - upstreamable changes)
 
                 # start runner
                 # Setting pty=False is required to stop the screen from being
@@ -84,11 +91,22 @@ def setup_self_hosted_runners():
 
     except BaseException as e:
         traceback.print_exc(file=sys.stdout)
-        terminate_workflow_instances(ci_personal_api_token, ci_workflow_run_id)
+        platform_lib.terminate_instances(ci_personal_api_token, ci_workflow_run_id)
         sys.exit(1)
 
 if __name__ == "__main__":
-    execute(wait_machine_launch_complete, hosts=[manager_hostname(ci_workflow_run_id)])
-    # after we know machine-launch-script.sh is done, we need to logout and log back in
-    fabric.network.disconnect_all()
-    execute(setup_self_hosted_runners, hosts=[manager_hostname(ci_workflow_run_id)])
+
+    assert(len(sys.argv) == 2)
+    platform = get_platform_enum(sys.argv[1])
+    if platform == Platform.AWS:
+        # First, do this for AWS, then with Azure
+        execute(wait_machine_launch_complete, hosts=[aws_platform_lib.get_manager_hostname(ci_workflow_run_id)])
+        # after we know machine-launch-script.sh is done, we need to logout and log back in
+        fabric.network.disconnect_all()
+        execute(setup_self_hosted_runners, aws_platform_lib, hosts=[aws_platform_lib.get_manager_hostname(ci_workflow_run_id)])
+    elif platform == Platform.AZURE:
+        execute(wait_machine_launch_complete, hosts=[azure_platform_lib.get_manager_hostname(ci_workflow_run_id)])
+        fabric.network.disconnect_all()
+        execute(setup_self_hosted_runners, azure_platform_lib, hosts=[azure_platform_lib.get_manager_hostname(ci_workflow_run_id)])
+    else:
+        raise Exception("Must run on either AWS or Azure")
