@@ -7,7 +7,7 @@
 import argparse
 
 from platform_lib import Platform, get_platform_enum
-from common import aws_platform_lib, azure_platform_lib
+from common import get_platform_lib
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -24,6 +24,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     platform = get_platform_enum(args.platform)
     if platform == Platform.AWS or platform == Platform.ALL:
-        aws_platform_lib.change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)
+        get_platform_lib(Platform.AWS).change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)
     if platform == Platform.AZURE or platform == Platform.ALL:        
-        azure_platform_lib.change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)
+        get_platform_lib(Platform.AZURE).change_workflow_instance_states(args.github_api_token, args.tag_value, args.state_change)

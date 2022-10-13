@@ -10,7 +10,8 @@ import pytz
 import boto3
 import sys
 from azure.identity import DefaultAzureCredential
-from common import unique_tag_key, deregister_runners, aws_platform_lib, azure_platform_lib
+from platform_lib import Platform
+from common import unique_tag_key, deregister_runners, get_platform_lib
 
 # Reuse manager utilities
 from ci_variables import ci_workdir, ci_personal_api_token, ci_workflow_run_id, ci_azure_sub_id
@@ -34,6 +35,7 @@ def find_timed_out_resources(current_time: DateTime, resource_list: Iterable[Tup
 
 def cull_aws_instances(current_time: DateTime) -> None:
     # Grab all instances with a CI-generated tag
+    aws_platform_lib = get_platform_lib(Platform.AWS)
     all_ci_instances = aws_platform_lib.find_all_ci_instances()
     
     client = boto3.client('ec2')
@@ -47,6 +49,7 @@ def cull_aws_instances(current_time: DateTime) -> None:
         print("  " + inst['InstanceId'])
 
 def cull_azure_resources(current_time: DateTime) -> None:
+    azure_platform_lib = get_platform_lib(Platform.AZURE)
     all_azure_ci_vms = azure_platform_lib.find_all_ci_instances()
 
     vms_to_terminate = find_timed_out_resources(current_time, \
@@ -62,6 +65,6 @@ def main():
     current_time = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
 
     cull_aws_instances(current_time)
-    cull_azure_resources(current_time)
+    #cull_azure_resources(current_time)
 if __name__ == "__main__":
     main()

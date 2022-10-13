@@ -9,7 +9,7 @@ from fabric.api import *
 import fabric
 
 from platform_lib import Platform, PlatformLib, get_platform_enum
-from common import deregister_runners, manager_home_dir, gha_runners_api_url, get_header, aws_platform_lib, azure_platform_lib
+from common import deregister_runners, manager_home_dir, gha_runners_api_url, get_header, get_platform_lib
 # This is expected to be launch from the ci container
 from ci_variables import ci_personal_api_token, ci_workflow_run_id, ci_repo_name
 
@@ -67,15 +67,9 @@ def setup_self_hosted_runners(platform_lib: PlatformLib):
                 # config runner
                 put(".github/scripts/gh-a-runner.expect", actions_dir)
                 run("chmod +x gh-a-runner.expect")
-<<<<<<< HEAD
-                runner_name = f"{ci_workflow_run_id}-{runner_idx}" # used to teardown runner
-                unique_label = ci_workflow_run_id # used within the yaml to choose a runner
-                run("./gh-a-runner.expect {} {} {}".format(reg_token, runner_name, unique_label))
-=======
                 runner_name = f"{platform_lib.get_platform_enum()}-{ci_workflow_run_id}-{runner_idx}" # used to teardown runner
                 unique_label = f"{platform_lib.get_platform_enum()}-{ci_workflow_run_id}" # used within the yaml to choose a runner
                 run(f"./gh-a-runner.expect {reg_token} {runner_name} {unique_label} {ci_repo_name}")
->>>>>>> 58b6e2d6 (adding azure ci - upstreamable changes)
 
                 # start runner
                 # Setting pty=False is required to stop the screen from being
@@ -98,15 +92,9 @@ if __name__ == "__main__":
 
     assert(len(sys.argv) == 2)
     platform = get_platform_enum(sys.argv[1])
-    if platform == Platform.AWS:
-        # First, do this for AWS, then with Azure
-        execute(wait_machine_launch_complete, hosts=[aws_platform_lib.get_manager_hostname(ci_workflow_run_id)])
-        # after we know machine-launch-script.sh is done, we need to logout and log back in
-        fabric.network.disconnect_all()
-        execute(setup_self_hosted_runners, aws_platform_lib, hosts=[aws_platform_lib.get_manager_hostname(ci_workflow_run_id)])
-    elif platform == Platform.AZURE:
-        execute(wait_machine_launch_complete, hosts=[azure_platform_lib.get_manager_hostname(ci_workflow_run_id)])
-        fabric.network.disconnect_all()
-        execute(setup_self_hosted_runners, azure_platform_lib, hosts=[azure_platform_lib.get_manager_hostname(ci_workflow_run_id)])
-    else:
-        raise Exception("Must run on either AWS or Azure")
+    platform_lib = get_platform_lib(platform)
+    # First, do this for AWS, then with Azure
+    execute(wait_machine_launch_complete, hosts=[platform_lib.get_manager_hostname(ci_workflow_run_id)])
+    # after we know machine-launch-script.sh is done, we need to logout and log back in
+    fabric.network.disconnect_all()
+    execute(setup_self_hosted_runners, platform_lib, hosts=[platform_lib.get_manager_hostname(ci_workflow_run_id)])
