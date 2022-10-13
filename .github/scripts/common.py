@@ -79,15 +79,14 @@ def deregister_runners(gh_token: str, runner_name: str) -> None:
         if runner_name in runner["name"]:
             delete_runner(gh_token, runner)
 
-#Only need this after we run aws configure
-
 aws_platform_lib = AWSPlatformLib(deregister_runners)
-azure_platform_lib = AzurePlatformLib(deregister_runners)
+#azure_platform_lib = AzurePlatformLib(deregister_runners)
 
 def get_platform_lib(platform: Platform) -> PlatformLib:
     if platform == Platform.AWS:
         return aws_platform_lib
     elif platform == Platform.AZURE:
-        return azure_platform_lib
+        #return azure_platform_lib
+        raise Exception(f"Azure not yet supported")
     else:
         raise Exception(f"Invalid platform: '{platform}'")
