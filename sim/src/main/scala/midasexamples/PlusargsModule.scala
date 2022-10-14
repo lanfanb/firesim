@@ -43,26 +43,11 @@ class PlusargsDUT extends Module {
 
   io.gotPlusargValue := PlusargsBridge.drive(params)
 
+  // println("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY")
+
 }
-
-
-// // A simple MIDAS harness that generates a legacy
-// // module DUT (it has a single io: Data member) and connects all of
-// // its IO to a PeekPokeBridge
-// class PeekPokeMidasExampleHarness2(dutGen: () => Module) extends RawModule {
-//   val clock = RationalClockBridge().io.clocks.head
-//   val reset = WireInit(false.B)
-
-//   withClockAndReset(clock, reset) {
-//     val dut = Module(dutGen())
-//     val peekPokeBridge = PeekPokeBridge(clock, reset, chisel3.experimental.DataMirror.modulePorts(dut).filterNot {
-//       case (name, _) => name == "clock" | name == "reset"
-//     }:_*)
-//   }
-// }
-
 
 
 // class Plusargs(implicit p: Parameters) extends PeekPokeMidasExampleHarness(() => new ParityDUT)
 class Plusargs(implicit p: Parameters) extends PeekPokeMidasExampleHarness(() => new PlusargsDUT)
-// class Plusargs(implicit p: Parameters) extends PeekPokeMidasExampleHarness2(() => new PlusargsDUT)
+
