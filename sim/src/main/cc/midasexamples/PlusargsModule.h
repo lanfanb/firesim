@@ -3,10 +3,10 @@
 #include "simif_peek_poke.h"
 // #include <iostream>
 
-class Plusargs_t: public simif_peek_poke_t
+class PlusargsModule_t: public simif_peek_poke_t
 {
 public:
-  Plusargs_t(int argc, char** argv) {}
+  PlusargsModule_t(int argc, char** argv) {}
   void run() {
     uint32_t is_odd = 0;
     target_reset();

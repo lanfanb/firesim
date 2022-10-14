@@ -49,5 +49,5 @@ class PlusargsDUT extends Module {
 
 
 // class Plusargs(implicit p: Parameters) extends PeekPokeMidasExampleHarness(() => new ParityDUT)
-class Plusargs(implicit p: Parameters) extends PeekPokeMidasExampleHarness(() => new PlusargsDUT)
+class PlusargsModule(implicit p: Parameters) extends PeekPokeMidasExampleHarness(() => new PlusargsDUT)
 

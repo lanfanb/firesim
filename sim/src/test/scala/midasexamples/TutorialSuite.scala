@@ -187,7 +187,7 @@ class ParityF1Test extends TutorialSuite("Parity") {
   runTest("verilator", true)
   runTest("vcs", true)
 }
-class PlusargsTest extends TutorialSuite("Plusargs") {
+class PlusargsTest extends TutorialSuite("PlusargsModule") {
   runTest("verilator", true)
   // runTest("vcs", true)
 }
