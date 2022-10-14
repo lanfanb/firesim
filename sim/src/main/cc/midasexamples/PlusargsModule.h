@@ -44,7 +44,8 @@ public:
     //   is_odd = (is_odd + bit) % 2;
     //   expect(io_out, is_odd);
     //   expect(1, 1);
-        std::cout << "Step " << i << "\n";
+      auto peekv = peek(io_gotPlusargValue);
+      std::cout << "Step " << i << ", " << peekv << "\n";
     }
   }
 };

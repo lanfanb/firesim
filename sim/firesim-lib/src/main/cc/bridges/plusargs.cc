@@ -26,7 +26,9 @@ plusargs_t::~plusargs_t() {
 }
 
 void plusargs_t::tick() {
-  std::cout << "plusargs_t::tick() " << read(this->mmio_addrs->plusargs_out) << "\n";
+  // std::cout << "plusargs_t::tick() " << read(this->mmio_addrs->plusargs_out) << "\n";
+  tick_counter += 1;
+  write(this->mmio_addrs->out, 63 + tick_counter);
 }
 
 const char* plusargs_t::exit_message() {
@@ -35,6 +37,7 @@ const char* plusargs_t::exit_message() {
 
 void plusargs_t::init() {
     std::cout << "plusargs_t::init()\n";
+    // write(this->mmio_addrs->out, 63);
 }
 
 #endif

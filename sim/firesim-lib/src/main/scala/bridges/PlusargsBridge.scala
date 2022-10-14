@@ -69,7 +69,7 @@ class PlusargsBridgeModule(params: PlusargsBridgeParams)(implicit p: Parameters)
     val io = IO(new WidgetIO())
     val hPort = IO(new PlusargsBridgeHostIO(params)())
 
-    val gen = genWOReg(Wire(UInt(32.W)), "plusargs_out")
+    val gen = genWOReg(Wire(UInt(32.W)), "out")
     hPort.outChannel.valid := true.B
     hPort.outChannel.bits := gen
 
