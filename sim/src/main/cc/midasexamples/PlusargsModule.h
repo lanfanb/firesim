@@ -31,21 +31,32 @@ public:
     // }
     // std::cout << "\n\n";
 #endif
-
   }
+
+  void reset_with_plusargs() {
+    constexpr int pulse_length = 5; // copied from default argument of simif_peek_poke_t::target_reset()
+    poke(reset, 1);
+    plusargsinator->tick();
+    this->step(pulse_length, true);
+    poke(reset, 0);
+  }
+
   void run() {
     uint32_t is_odd = 0;
-    target_reset();
+    // target_reset();
+    reset_with_plusargs(); // call this instead of target_reset
+
+    std::cout << "Step " << "-1" << ", " << peek(io_gotPlusargValue) << "\n";
     for (int i = 0 ; i < 8 ; i++) {
-      plusargsinator->tick();
+      // plusargsinator->tick();
     //   uint32_t bit = rand_next(2);
     //   poke(io_in, bit);
       step(1);
     //   is_odd = (is_odd + bit) % 2;
     //   expect(io_out, is_odd);
     //   expect(1, 1);
-      auto peekv = peek(io_gotPlusargValue);
-      std::cout << "Step " << i << ", " << peekv << "\n";
+      // auto peekv = peek(io_gotPlusargValue);
+      std::cout << "Step " << i << ", " << peek(io_gotPlusargValue) << "\n";
     }
   }
 };

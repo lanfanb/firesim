@@ -27,6 +27,7 @@ class plusargs_t: public bridge_driver_t
     int fail = 0;
     int tick_rate = 10;
     int tick_counter = 0;
+    int default_value = 0x40;
 };
 #endif // PLUSARGSBRIDGEMODULE_struct_guard
 #endif //__PLUSARGS_H
