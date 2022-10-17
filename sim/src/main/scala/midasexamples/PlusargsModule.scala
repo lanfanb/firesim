@@ -16,7 +16,7 @@ class PlusargsModuleIO(val params: PlusargsBridgeParams) extends Bundle {
   // val msgInCycle = Input(UInt(16.W))  //Cycle when error is valid
   // val validInCycle = Input(UInt(16.W)) //Cycle when the program finishes
   // val doneErrCode = Input(UInt(((params.conditionInfo).size).W)) //Error code supplied by program
-  val in  = Input(Bool()) // delme
+  // val in  = Input(Bool()) // delme
   val gotPlusargValue = Output(UInt((params.width).W)) // Output value that plusargs bridge gives us
   // val valid = Output(Bool()) // valid signal coming from plusargs bridge
 }
