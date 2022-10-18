@@ -188,8 +188,17 @@ class ParityF1Test extends TutorialSuite("Parity") {
   runTest("vcs", true)
 }
 class PlusargsTest extends TutorialSuite("PlusargsModule") {
-  runTest("verilator", true)
-  // runTest("vcs", true)
+
+  // Use this syntax, to pass args, combine with "it should" (line 130)
+  // for each test
+  // 1 to 10 foreach {x => runTest(backendSimulator, args = Seq("+termination-bridge-tick-rate=10", s"+seed=${x}"), shouldPass = true)}
+  it should s"provide the correct default value" in {
+    assert(run("verilator", true) == 0)
+  }
+
+  it should s"accept an int from the command line" in {
+    assert(run("verilator", true, args = Seq("+plusargs_test_value=3")) == 0)
+  }
 }
 class ShiftRegisterF1Test extends TutorialSuite("ShiftRegister")
 class ResetShiftRegisterF1Test extends TutorialSuite("ResetShiftRegister")

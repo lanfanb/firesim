@@ -27,7 +27,7 @@ class PlusargsDUT extends Module {
   // val pin = PlusArg("custom_boot_pin", width=1)
   // val endMessage = Seq(TerminationCondition(false, "success 1"), TerminationCondition(false, "success 2"), TerminationCondition(true, "failure 3"))
   
-  val params = PlusargsBridgeParams("plusargs_test_value", default = 0, docstring = "", width=32)
+  val params = PlusargsBridgeParams("plusargs_test_value=%d", default = 0, docstring = "", width=32)
   // val params = PlusargsBridgeParams("plusargs_test_value")
 
   val io = IO(new PlusargsModuleIO(params))

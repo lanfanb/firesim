@@ -69,9 +69,21 @@ class PlusargsBridgeModule(params: PlusargsBridgeParams)(implicit p: Parameters)
     val io = IO(new WidgetIO())
     val hPort = IO(new PlusargsBridgeHostIO(params)())
 
-    val gen = genWOReg(Wire(UInt(32.W)), "out")
+    // bundle multiple genWOReg to support more width
+    val plusargValue = genWOReg(Wire(UInt(32.W)), "out")  // fixme width as param
+
+    // add another genWOReg called "initDone"
+    // and replace true.B
     hPort.outChannel.valid := true.B
-    hPort.outChannel.bits := gen
+    hPort.outChannel.bits := plusargValue
+
+    val plusargValueNext = RegNext(plusargValue)
+    
+
+    
+
+    // only run if initDone is set
+    assert(plusargValueNext === plusargValue)
 
 
     override def genHeader(base: BigInt, sb: StringBuilder) {

@@ -11,14 +11,15 @@ plusargs_t::plusargs_t(
     mmio_addrs(mmio_addrs)
 {
   //tick-rate to decide sampling rate of MMIOs per number of ticks
-//   std::string tick_rate_arg = std::string("+termination-bridge-tick-rate=");
-//   for (auto &arg: args) {
-//     if (arg.find(tick_rate_arg) == 0) {
-//       char *str = const_cast<char*>(arg.c_str()) + tick_rate_arg.length();
-//       uint64_t tick_period = atol(str);
-//       this->tick_rate = tick_period;
-//     }
-//   }
+  // std::string tick_rate_arg = std::string("+plusargs_test_value=");
+  // for (auto &arg: args) {
+  //   std::cout << arg << "\n";
+  //   if (arg.find(tick_rate_arg) == 0) {
+  //     char *str = const_cast<char*>(arg.c_str()) + tick_rate_arg.length();
+  //     uint64_t tick_period = atol(str);
+  //     this->tick_rate = tick_period;
+  //   }
+  // }
 }
 
 plusargs_t::~plusargs_t() {
@@ -26,9 +27,6 @@ plusargs_t::~plusargs_t() {
 }
 
 void plusargs_t::tick() {
-  // std::cout << "plusargs_t::tick() " << read(this->mmio_addrs->plusargs_out) << "\n";
-  // tick_counter += 1;
-  write(this->mmio_addrs->out, default_value);
 }
 
 const char* plusargs_t::exit_message() {
@@ -38,6 +36,7 @@ const char* plusargs_t::exit_message() {
 void plusargs_t::init() {
     std::cout << "plusargs_t::init()\n";
     // write(this->mmio_addrs->out, 63);
+    write(this->mmio_addrs->out, default_value);
 }
 
 #endif
