@@ -37,6 +37,7 @@ void plusargs_t::init() {
     std::cout << "plusargs_t::init()\n";
     // write(this->mmio_addrs->out, 63);
     write(this->mmio_addrs->out, default_value);
+    write(this->mmio_addrs->initDone, 1);
 }
 
 #endif
