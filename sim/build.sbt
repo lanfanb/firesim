@@ -64,7 +64,7 @@ lazy val firesimAsLibrary = sys.env.get("FIRESIM_STANDALONE") == None
 lazy val chipyardDir = if(firesimAsLibrary) {
   file("../../../")
 } else {
-  file("../target-design/chipyard")
+  file(sys.env("CHIPYARD_HOME"))
 }
 
 lazy val chipyard      = ProjectRef(chipyardDir, "chipyard")
